@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 # © 2015 Eficent Business and IT Consulting Services S.L.
 # - Jordi Ballester Alomar
+# © 2015 Serpent Consulting Services Pvt. Ltd. - Sudhir Arya
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from openerp import api, fields, models, _
 import openerp.addons.decimal_precision as dp
 import time
-# from openerp.exceptions import ValidationError as UserError
-# from openerp.exceptions import Warning
 from openerp.exceptions import UserError
 
 
@@ -37,7 +36,8 @@ class StockInventoryRevaluation(models.Model):
             for prod_variant in \
                     revaluation.product_template_id.product_variant_ids:
                 qty_available += prod_variant.qty_available
-                if revaluation.product_template_id.categ_id.property_cost_method == 'real':
+                if revaluation.product_template_id.categ_id.\
+                        property_cost_method == 'real':
                     quants = quant_obj.search([('product_id', '=',
                                                 prod_variant.id),
                                                ('location_id.usage', '=',
@@ -280,15 +280,16 @@ class StockInventoryRevaluation(models.Model):
     def post(self):
         for revaluation in self:
             amount_diff = 0.0
-            if revaluation.product_template_id.categ_id.property_cost_method == 'real':
+            if revaluation.product_template_id.categ_id.\
+                    property_cost_method == 'real':
                 for reval_quant in revaluation.reval_quant_ids:
                     amount_diff += reval_quant.get_total_value()
                     reval_quant.write_new_cost()
                 if amount_diff == 0.0:
                     return True
             else:
-                if revaluation.product_template_id.categ_id.property_cost_method \
-                        in ['standard', 'average']:
+                if revaluation.product_template_id.categ_id.\
+                        property_cost_method in ['standard', 'average']:
                     if revaluation.revaluation_type == 'price_change':
                         diff = revaluation.current_cost - revaluation.new_cost
                         amount_diff = revaluation.qty_available * diff
@@ -320,7 +321,8 @@ class StockInventoryRevaluation(models.Model):
                         revaluation.product_template_id.write(
                             {'standard_price': new_cost})
 
-            if revaluation.product_template_id.categ_id.property_valuation == 'real_time':
+            if revaluation.product_template_id.categ_id.\
+                    property_valuation == 'real_time':
                 revaluation._create_accounting_entry(amount_diff)
 
     @api.model
@@ -409,7 +411,8 @@ class StockInventoryRevaluationQuant(models.Model):
     @api.model
     def get_total_value(self):
         amount_diff = 0.0
-        if self.product_id.product_tmpl_id.categ_id.property_cost_method == 'real':
+        if self.product_id.product_tmpl_id.categ_id.\
+                property_cost_method == 'real':
             if self.revaluation_id.revaluation_type != 'price_change':
                 raise UserError(_("You can only post quant cost changes."))
             else:
