@@ -221,7 +221,6 @@ class StockInventoryRevaluation(models.Model):
 
     @api.model
     def _prepare_debit_move_line_data(self, amount, account_id, prod_id):
-        print "_prepare_debit_move_line_data ************", amount, account_id, prod_id
         return {
             'name': self.name,
             'date': self.account_move_id.date,
@@ -233,7 +232,6 @@ class StockInventoryRevaluation(models.Model):
 
     @api.model
     def _prepare_credit_move_line_data(self, amount, account_id, prod_id):
-        print "_prepare_credit_move_line_data ************", amount
         return {
             'name': self.name,
             'date': self.account_move_id.date,
@@ -274,7 +272,6 @@ class StockInventoryRevaluation(models.Model):
                     move_line_data = self._prepare_debit_move_line_data(
                         abs(amount_diff), debit_account_id, prod_variant.id)
                     move_line_obj.create(move_line_data)
-                    print "\n\n voila ^^^^^^^^^^^^^^^^^^^^^^^^", abs(amount_diff), credit_account_id, prod_variant.id
                     move_line_data = self._prepare_credit_move_line_data(
                         abs(amount_diff), credit_account_id, prod_variant.id)
                     move_line_obj.create(move_line_data)
@@ -353,7 +350,6 @@ class StockInventoryRevaluation(models.Model):
             for reval_quant in revaluation.reval_quant_ids:
                 reval_quant.quant_id.write({'cost': reval_quant.old_cost})
             if moves:
-                print "button_cancel &&&&&&&&&&&&&&&&&&&&&&&&&&&&&", moves
                 # second, invalidate the move(s)
                 moves.button_cancel()
                 # delete the move this revaluation was pointing to
