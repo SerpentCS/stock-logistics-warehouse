@@ -56,6 +56,15 @@ class StockWarehouseOrderpoint(models.Model):
 
                 op.procure_recommended_qty = product_qty
 
+    @api.multi
+    @api.depends('procurement_ids')
+    def _compute_procurement_avail(self):
+        for orderpoint in self:
+            if orderpoint.procurement_ids:
+                orderpoint.procurement_avail = True
+            else:
+                orderpoint.procurement_avail = False
+
     procure_recommended_qty = fields.Float(
         string='Procure recommendation',
         compute="_compute_procure_recommended",
@@ -63,3 +72,6 @@ class StockWarehouseOrderpoint(models.Model):
     procure_recommended_date = fields.Date(
         string='Request Date',
         compute="_compute_procure_recommended")
+    procurement_avail = fields.Boolean(compute=_compute_procurement_avail,
+                                       string='Procurement Availability',
+                                       readonly=True, default=False)

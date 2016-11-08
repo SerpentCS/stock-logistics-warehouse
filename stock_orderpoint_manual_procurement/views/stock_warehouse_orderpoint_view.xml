@@ -9,7 +9,7 @@
                    ref="stock.view_warehouse_orderpoint_tree"/>
             <field name="arch" type="xml">
                 <field name="product_uom" position="after">
-                    <field name="procurement_ids" invisible="1"/>
+                    <field name="procurement_avail" invisible="1"/>
                     <field name="procure_recommended_qty"/>
                     <field name="procure_recommended_date"/>
                     <button string="Create Procurement"
@@ -17,7 +17,7 @@
 							icon="gtk-execute" type="action"/>
                     <button string="Procurements"
 							name="%(procurement.procurement_action)d"
-                            attrs="{'invisible':[('procurement_ids', '=', False)]}"
+                            attrs="{'invisible':[('procurement_avail', '=', False)]}"
 							icon="gtk-open" type="action"
                             domain="[('orderpoint_id','=', active_id)]"
                             context="{'search_default_orderpoint_id': [active_id]}"/>
